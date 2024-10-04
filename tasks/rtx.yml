@@ -1,0 +1,48 @@
+---
+- name: RTX activate.
+  lineinfile:
+    dest: ~/.zshrc
+    line: "eval \"$(rtx activate zsh )\""
+    state: present
+    insertafter: EOF
+
+- name: Ensure required eval line is in .zshrc.
+  lineinfile:
+    dest: ~/.zshrc
+    line: "export PATH=$HOME/bin:$PATH"
+    state: present
+    insertafter: EOF
+
+- name: Check if Node is installed
+  shell: "node -v"
+  args:
+    executable: /bin/zsh
+  register: node_check
+  ignore_errors: yes
+
+- name: Install node {{ node_version }}
+  shell: "source ~/.zshrc && rtx install nodejs@{{ node_version }}"
+  args:
+    executable: /bin/zsh
+  when: node_check.rc != 0 or node_check.stdout.split()[1] != node_version
+
+- name: Set global version of node
+  shell: "source ~/.zshrc && rtx use --global nodejs@{{ node_version }}"
+  args:
+    executable: /bin/zsh
+
+- name: Check if Ruby is installed
+  command: ruby -v
+  register: ruby_check
+  ignore_errors: yes
+
+- name: Install ruby {{ ruby_version }}
+  shell: "source ~/.zshrc && rtx install ruby@{{ ruby_version }}"
+  args:
+    executable: /bin/zsh
+  when: ruby_check.rc != 0 or ruby_check.stdout.split()[1] != ruby_version
+
+- name: Set global version of ruby
+  shell: "source ~/.zshrc && rtx use --global ruby@{{ ruby_version }}"
+  args:
+    executable: /bin/zsh

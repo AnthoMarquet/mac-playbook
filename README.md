@@ -8,7 +8,7 @@ This playbook installs and configures most of the software I use on my Mac for w
 
 ## Installation
 
-  1. Ensure Apple's command line tools are installed (`xcode-select --install` to launch the installer).
+  1. Run the script `xcode-install.sh` to be ensure Apple's command line tools are installed. 
   2. [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/index.html):
 
      1. Run the following command to add Python 3 to your $PATH: `export PATH="$HOME/Library/Python/3.9/bin:/opt/homebrew/bin:$PATH"`
@@ -38,7 +38,11 @@ Then edit the `inventory` file in this repository and change the line that start
 [ip address or hostname of mac]  ansible_user=[mac ssh username]
 ```
 
-If you need to supply an SSH password (if you don't use SSH keys), make sure to pass the `--ask-pass` parameter to the `ansible-playbook` command.
+If you need to supply an SSH password (if you don't use SSH keys), make sure to pass the `--ask-pass` parameter to the `ansible-playbook` command. You need to install sshkeypass to do that:
+Run `brew install hudochenkov/sshpass/sshpass` 
+
+Install Apple's command line tools
+Run `ssh ansible_user@ip_address 'bash -s' < {your_local_path}/mac-playbook/xcode-install.sh`
 
 ### Running a specific set of tagged tasks
 
